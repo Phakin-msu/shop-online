@@ -1,14 +1,14 @@
 <?php
 session_start();
-require_once 'config.php'; // ต้องมี $pdo และชี้ไป shopdb
+require_once 'config.php'; 
 
-// ต้องล็อกอินก่อน
+
 if (empty($_SESSION['logged_in'])) {
     header('Location: login.php');
     exit();
 }
 
-// Security headers
+
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
@@ -21,12 +21,12 @@ function gen_quote_code(){
     return 'QT'.date('YmdHis').$rand;
 }
 
-// เตรียมตะกร้า
+
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = array();
 }
 
-// CSRF
+
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(function_exists('random_bytes') ? random_bytes(16) : openssl_random_pseudo_bytes(16));
 }
@@ -46,7 +46,7 @@ if (!empty($skus)) {
     }catch(PDOException $e){}
 }
 
-// sync cart กับ DB
+
 foreach ($skus as $sku){
     if (!isset($productMap[$sku])) { unset($_SESSION['cart'][$sku]); continue; }
     $_SESSION['cart'][$sku]['name']  = isset($productMap[$sku]['name']) ? $productMap[$sku]['name'] : (isset($_SESSION['cart'][$sku]['name'])?$_SESSION['cart'][$sku]['name']:'');
@@ -131,9 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
                 $pdo->commit();
 
-                // เก็บรหัสไว้โชว์
+              
                 $ok_msg = 'ส่งคำขอใบเสนอราคาเรียบร้อย! รหัส: '.$quote_code;
-                // (จะล้างตะกร้าหรือไม่ ขึ้นกับนโยบาย — ที่นี่ “ยังไม่ล้าง”)
+                
             }catch(Exception $ex){
                 if ($pdo->inTransaction()) $pdo->rollBack();
                 $err_msg = 'บันทึกไม่สำเร็จ: '.$ex->getMessage();

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // ต้องมี $pdo และ dbname=shopdb
+require_once 'config.php'; 
 
 // ต้องล็อกอินก่อนถึงจะเข้าได้
 if (empty($_SESSION['logged_in'])) {
@@ -8,12 +8,12 @@ if (empty($_SESSION['logged_in'])) {
     exit();
 }
 
-// HTTP Security Headers
+// เพิ่มความปลอดภัยของ header
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 
-// นับจำนวนสินค้าในตะกร้า (สำหรับ badge)
+// นับจำนวนสินค้าในตะกร้า 
 $cart_count = 0;
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $it) {
@@ -40,7 +40,6 @@ try {
 function format_price($price) {
     return number_format((float)$price, 0);
 }
-// escape
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!DOCTYPE html>
@@ -217,7 +216,7 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
     });
   }
 
-  // ปุ่ม "เพิ่มเข้าตะกร้า" -> POST ไป cart_add.php แล้วอัปเดต badge (เฉพาะสินค้าที่มีสต็อก)
+  // ปุ่ม "เพิ่มเข้าตะกร้า" 
   var addButtons = document.querySelectorAll('.add-to-cart');
   for (var j = 0; j < addButtons.length; j++) {
     addButtons[j].addEventListener('click', function () {

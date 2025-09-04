@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email   = htmlspecialchars($_POST['email']);
     $message = htmlspecialchars($_POST['message']);
 
-    // ตัวอย่าง: แค่เก็บไว้ในไฟล์ (จริง ๆ ควรส่งอีเมลหรือบันทึกลง DB)
+   
     $log = "contact_messages.txt";
     $data = date("Y-m-d H:i:s") . " | $name | $email | $message\n";
     file_put_contents($log, $data, FILE_APPEND);

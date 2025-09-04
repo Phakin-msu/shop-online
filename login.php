@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // ต้องมี $pdo ที่ชี้ไปยัง shopdb (ดูไฟล์ config.php ที่แก้ไว้ก่อนหน้า)
+require_once 'config.php'; 
 
 $error_message = '';
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error_message = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
             }
         } catch (PDOException $e) {
-            // เก็บ log ภายในถ้าต้องการ แล้วค่อยโชว์ข้อความรวมๆ ให้ผู้ใช้
+            
             $error_message = 'เกิดข้อผิดพลาดในระบบ กรุณาลองใหม่อีกครั้ง';
         }
     }

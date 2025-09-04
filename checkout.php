@@ -1,13 +1,14 @@
 <?php
-// checkout_nodb.php — เช็คเอาท์จากตะกร้า + จ่าย/อัปสลิปได้ในหน้าเดียว (No-DB)
+
 session_start();
 
-/* ---------- Security headers ---------- */
+//no db
+
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 
-/* ---------- Polyfills (รองรับ PHP เก่า) ---------- */
+
 if (!function_exists('hash_equals')) {
   function hash_equals($a,$b){
     if (!is_string($a)||!is_string($b)) return false;
@@ -22,23 +23,23 @@ if (!function_exists('random_bytes')) {
   }
 }
 
-/* ---------- Helpers ---------- */
+
 function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 function nf0($n){ return number_format((float)$n, 0); }
 function nf2($n){ return number_format((float)$n, 2); }
 function post($k,$d=''){ return isset($_POST[$k]) ? $_POST[$k] : $d; }
 
-/* ---------- ต้องมีตะกร้า ---------- */
+
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart']) || empty($_SESSION['cart'])) {
   header('Location: cart.php'); exit;
 }
 
-/* ---------- CSRF ---------- */
+
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
 $csrf = $_SESSION['csrf_token'];
 function valid_csrf($t){ return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], (string)$t); }
 
-/* ---------- คำนวณยอดจากตะกร้า ---------- */
+
 $items = array(); $subtotal = 0; $count = 0;
 foreach ($_SESSION['cart'] as $sku=>$it) {
   $name  = isset($it['name'])  ? (string)$it['name']  : $sku;
@@ -49,19 +50,19 @@ foreach ($_SESSION['cart'] as $sku=>$it) {
   $subtotal += $line; $count += $qty;
 }
 
-/* ---------- ตั้งค่าร้าน / PromptPay ---------- */
-$promptpay_id = '0653306505'; // <-- เปลี่ยนเป็นของร้านคุณ
 
-/* ---------- สถานะหน้า (form | pay) ---------- */
-$stage = 'form';        // เริ่มต้นที่ฟอร์มเช็คเอาท์
-$paidMsg = '';          // ข้อความหลังอัปโหลดสลิป
-$order = array();       // ข้อมูลออเดอร์ (เก็บใน session เมื่อกดยืนยัน)
+$promptpay_id = '0653333333'; 
 
-/* ---------- กดยืนยันเช็คเอาท์ ---------- */
+
+$stage = 'form';        
+$paidMsg = '';          
+$order = array();       
+
+
 if ($_SERVER['REQUEST_METHOD']==='POST' && post('action')==='place_order') {
   if (!valid_csrf(post('csrf_token'))) { http_response_code(400); exit('CSRF invalid'); }
 
-  // รับข้อมูลฟอร์ม
+ 
   $ship = array(
     'name'        => trim((string)post('ship_name')),
     'phone'       => trim((string)post('ship_phone')),
@@ -74,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && post('action')==='place_order') {
   $note   = trim((string)post('buyer_note'));
   $pay    = (string)post('payment_method','qr');
 
-  // ค่าขนส่งจากตัวเลือก
   $ship_method = (string)post('shipping_method','standard');
   $ship_fee = 0.0;
   if ($ship_method==='standard') $ship_fee = 40.0;
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && post('action')==='place_order') {
   $stage = 'pay';
 }
 
-/* ---------- โหลดออเดอร์เมื่ออยู่สเตจชำระ ---------- */
+
 if ($stage==='pay' || (!empty($_SESSION['last_order']) && post('action')!=='place_order')) {
   if (!empty($_SESSION['last_order'])) {
     $order = $_SESSION['last_order'];
@@ -124,7 +124,7 @@ if ($stage==='pay' && !empty($_FILES['slip']) && is_uploaded_file($_FILES['slip'
   elseif ($_FILES['slip']['size']>5*1024*1024) $paidMsg = 'ไฟล์ใหญ่เกิน 5MB';
   else {
     $ext = strtolower(pathinfo($_FILES['slip']['name'], PATHINFO_EXTENSION));
-    if (!$ext) { // เดาวงเล็บจาก mime สำหรับ PHP เก่า
+    if (!$ext) { 
       if (strpos($mime,'png')!==false) $ext='png';
       elseif (strpos($mime,'webp')!==false) $ext='webp';
       elseif (strpos($mime,'gif')!==false) $ext='gif';
@@ -142,7 +142,6 @@ if ($stage==='pay' && !empty($_FILES['slip']) && is_uploaded_file($_FILES['slip'
   }
 }
 
-/* ---------- Utils แสดงที่อยู่ ---------- */
 function fmt_addr($s){
   return trim(
     (isset($s['address'])?$s['address']:'').' '.

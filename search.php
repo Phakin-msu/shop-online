@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // ต้องตั้งค่า $pdo ชี้ไปที่ shopdb
+require_once 'config.php'; 
 
 // ต้องล็อกอินก่อนถึงจะเข้าได้
 if (empty($_SESSION['logged_in'])) {
@@ -16,7 +16,7 @@ $error = '';
 
 try {
     if ($q === '') {
-        // ไม่ได้พิมพ์คำค้น: แสดง 24 รายการล่าสุด
+       
         $stmt = $pdo->query("
             SELECT id, sku, name, description, price, image_url
             FROM products
@@ -25,7 +25,7 @@ try {
         ");
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        // มีคำค้น: ค้นหาใน name, description และ sku
+        
         $like = '%' . $q . '%';
         $stmt = $pdo->prepare("
             SELECT id, sku, name, description, price, image_url
@@ -101,7 +101,7 @@ function format_price($n) {
               <p class="card-text text-danger fw-bold">฿<?php echo format_price($price); ?></p>
               <p class="text-muted flex-grow-1"><?php echo htmlspecialchars($desc, ENT_QUOTES, 'UTF-8'); ?></p>
 
-              <!-- แนะนำ: ส่งเฉพาะ sku ไป orderpd.php แล้วให้ไปดึงราคา/ข้อมูลจาก DB ซ้ำ -->
+              
               <a href="orderpd.php?sku=<?php echo urlencode($sku); ?>"
                  class="btn btn-primary mt-auto">สั่งซื้อ</a>
             </div>

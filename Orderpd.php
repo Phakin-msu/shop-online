@@ -1,5 +1,5 @@
 <?php
-// orderpd.php — Checkout (no VAT/coupon), compact
+
 ob_start(); session_start();
 if (empty($_SESSION['logged_in'])) { header('Location: login.php'); exit(); }
 header('X-Content-Type-Options: nosniff'); header('X-Frame-Options: SAMEORIGIN'); header('Referrer-Policy: strict-origin-when-cross-origin');
@@ -122,7 +122,7 @@ $img = isset($img[$id])? $img[$id] : 'img/photo.png';
   </div></div>
 </div>
 
-<!-- ขวา -->
+
 <div class="col-lg-4">
   <div class="card shadow-sm sticky-summary"><div class="card-body">
     <div class="section-title mb-3">สรุปคำสั่งซื้อ</div>
@@ -166,10 +166,10 @@ $img = isset($img[$id])? $img[$id] : 'img/photo.png';
 </div></div>
 
 <script>
-  // helpers
+  
   const nf=n=>Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   const toNum=v=>Number((v||'0').toString().replace(/,/g,''));
-  // els
+
   const qtyEl = document.getElementById('qty'),
         priceEl=document.getElementById('price'),
         lineTotalEl=document.getElementById('line_total'),
